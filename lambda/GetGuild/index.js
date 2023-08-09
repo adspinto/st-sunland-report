@@ -5,7 +5,7 @@ const parseDynamoItem = (item) => {
   const obj = {};
   Object.keys(item).forEach((key) => {
     Object.assign(obj, {
-      [key]: { N: item[key] },
+      [key]: { S: item[key].toString() },
     });
   });
   return obj;
