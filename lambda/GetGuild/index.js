@@ -81,9 +81,11 @@ const scan = async (res) => {
         state.invst_monday = find.invst;
         const diffInvest = item.invst - find.invst;
         const findLevel = investPerLevel.find(
-          (value) => item.level - value.levelRange < 10
+          (value) =>
+            item.level - value.levelRange < 10 &&
+            item.level - value.levelRange > 0
         );
-        state.percent_invested = findLevel.value / diffInvest;
+        state.percent_invested = diffInvest / findLevel.value;
       }
 
       return state;
@@ -109,7 +111,7 @@ export const handler = async (event) => {
   try {
     const apiRes = await fetch(`${apiUrl}/info/city/${guildId}`);
     const res = await apiRes.json();
-    await batchWrite(res);
+    // await batchWrite(res);
     const data = await scan(res);
     response.body = JSON.stringify(data);
   } catch (error) {
