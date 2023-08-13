@@ -35,7 +35,6 @@ const useGuild = () => {
   const parseData = useCallback((item) => {
     const nextItem = item;
 
-    console.log(item.invst);
     nextItem.invst_sofar = item.invst - item.invst_monday;
     nextItem.invst_sofar = moneyMask(nextItem.invst_sofar);
     nextItem.gld = moneyMask(nextItem.gld);

@@ -24,11 +24,8 @@ a:hover {
 }
 
 body {
-  margin: 0;
   display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  justify-content: center;
 }
 
 h1 {
@@ -77,4 +74,22 @@ table tfoot tr th {
 tbody tr td {
   text-align: left;
   padding: 5px;
+}
+.mobile-list-item {
+  padding: 0;
+}
+.mobile-list-item li {
+  text-align: left;
+  display: flex;
+  justify-content: space-between;
+}
+
+.mobile-list-container {
+  -webkit-box-shadow: 10px 10px 11px -10px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 10px 10px 11px -10px rgba(0, 0, 0, 0.75);
+  box-shadow: 10px 10px 11px -10px rgba(0, 0, 0, 0.75);
+  padding: 5px 10px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  margin-bottom: 10px;
 }
