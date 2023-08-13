@@ -3,20 +3,24 @@ const docClient = new AWS.DynamoDB.DocumentClient();
 
 const investPerLevel = [
   {
-    levelRange: 40,
+    levelRange: "4",
     value: 75000000,
   },
   {
-    levelRange: 50,
+    levelRange: "5",
     value: 150000000,
   },
   {
-    levelRange: 60,
+    levelRange: "6",
     value: 250000000,
   },
   {
-    levelRange: 70,
+    levelRange: "7",
     value: 400000000,
+  },
+  {
+    levelRange: "8",
+    value: 5000000000,
   },
 ];
 
@@ -81,9 +85,7 @@ const scan = async (res) => {
         state.invst_monday = find.invst;
         const diffInvest = item.invst - find.invst;
         const findLevel = investPerLevel.find(
-          (value) =>
-            item.level - value.levelRange < 10 &&
-            item.level - value.levelRange > 0
+          (value) => item.level.toString().split("")[0] === value.levelRange
         );
         state.percent_invested = diffInvest / findLevel.value;
       }

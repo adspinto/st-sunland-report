@@ -58,7 +58,7 @@ const columns = [
     footer: (info) => info.column.id,
   }),
   columnHelper.accessor("invst_monday", {
-    header: "Invest diff",
+    header: "Invest Monday",
     footer: (info) => info.column.id,
   }),
   columnHelper.accessor("percent_invested", {
