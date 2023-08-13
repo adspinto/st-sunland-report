@@ -67,3 +67,14 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+table thead tr th,
+table tfoot tr th {
+  text-align: left;
+  padding: 5px;
+  text-transform: capitalize;
+}
+tbody tr td {
+  text-align: left;
+  padding: 5px;
+}

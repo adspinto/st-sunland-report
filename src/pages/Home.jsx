@@ -10,59 +10,43 @@ import {
 
 const columnHelper = createColumnHelper();
 
-// activity: 1691890917788;
-// ascendUpg: 465;
-// bounty: 5123;
-// collection: 4699;
-// gld: 52092999223;
-// help: 7308;
-// invst: 67300216200;
-// invst_monday: 67300216200;
-// joined: 1615640193691;
-// level: 69;
-// lot: 8;
-// master: 239;
-// name: "LaisSouza#92353";
-// percent_invested: null;
-// prest: 72320;
-// quEvComp: 1080904;
-// quEvId: "39f78a8a-cef8-4486-bc97-4b438606d16f";
-// rank: 2;
-// score: 90928;
-// _id: "60490ddb14b7281331a5b887";
-
 const columns = [
   columnHelper.accessor("name", {
+    header: () => "Nome",
     cell: (info) => info.getValue(),
     footer: (info) => info.column.id,
   }),
   columnHelper.accessor("level", {
-    header: () => "level",
+    header: () => "Nivel",
     cell: (info) => info.renderValue(),
     footer: (info) => info.column.id,
   }),
   columnHelper.accessor("joined", {
-    header: () => <span>joined</span>,
+    header: () => "Na guild desde",
     footer: (info) => info.column.id,
   }),
   columnHelper.accessor("activity", {
-    header: () => <span>activity</span>,
+    header: () => "Ultima atividade",
     footer: (info) => info.column.id,
   }),
   columnHelper.accessor("gld", {
-    header: () => <span>Net worth</span>,
+    header: () => "Patrimônio",
     footer: (info) => info.column.id,
   }),
   columnHelper.accessor("invst", {
-    header: "Invested",
+    header: "Investimentos atuais",
     footer: (info) => info.column.id,
   }),
   columnHelper.accessor("invst_monday", {
-    header: "Invest Monday",
+    header: "Investimentos Segunda",
+    footer: (info) => info.column.id,
+  }),
+  columnHelper.accessor("invst_sofar", {
+    header: "Soma Investimentos",
     footer: (info) => info.column.id,
   }),
   columnHelper.accessor("percent_invested", {
-    header: "percent_invested",
+    header: "Percentual",
     footer: (info) => info.column.id,
   }),
 ];

@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 import { useQuery } from "react-query";
 import api from "../services/api";
 
@@ -27,7 +27,7 @@ const useGuild = () => {
         }
         return item;
       });
-      return fvalue.reverse().join("") + " G";
+      return fvalue.reverse().join("");
     } catch (error) {
       return value;
     }
@@ -35,10 +35,12 @@ const useGuild = () => {
   const parseData = useCallback((item) => {
     const nextItem = item;
 
+    console.log(item.invst);
+    nextItem.invst_sofar = item.invst - item.invst_monday;
+    nextItem.invst_sofar = moneyMask(nextItem.invst_sofar);
     nextItem.gld = moneyMask(nextItem.gld);
     nextItem.invst = moneyMask(item.invst);
     nextItem.invst_monday = moneyMask(item.invst_monday);
-
     nextItem.joined = formatDate(nextItem.joined);
     nextItem.activity = formatDate(nextItem.activity);
     if (nextItem.percent_invested) {
