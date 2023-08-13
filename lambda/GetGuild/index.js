@@ -4,19 +4,19 @@ const docClient = new AWS.DynamoDB.DocumentClient();
 const investPerLevel = [
   {
     levelRange: 40,
-    value: 75,
+    value: 75000000,
   },
   {
     levelRange: 50,
-    value: 150,
+    value: 150000000,
   },
   {
     levelRange: 60,
-    value: 250,
+    value: 250000000,
   },
   {
     levelRange: 70,
-    value: 400,
+    value: 400000000,
   },
 ];
 
@@ -99,6 +99,11 @@ export const handler = async (event) => {
   const guildId = event.queryStringParameters.guildId;
   const response = {
     statusCode: 200,
+    headers: {
+      "Access-Control-Allow-Headers": "Content-Type",
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "OPTIONS,POST,GET",
+    },
     body: JSON.stringify(apiUrl),
   };
   try {
