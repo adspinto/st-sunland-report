@@ -56,19 +56,6 @@ const parseDynamoItem = (item) => {
   };
 };
 
-const batchWrite = async (res) => {
-  const shouldWrite = isMonday();
-  if (shouldWrite) {
-    const data = res.data.members.map((item) => parseDynamoItem(item));
-    const params = {
-      RequestItems: {
-        [process.env.TABLE_NAME]: data,
-      },
-    };
-
-    await docClient.batchWrite(params).promise();
-  }
-};
 
 const scan = async (res) => {
   const params = {
@@ -84,6 +71,7 @@ const scan = async (res) => {
       if (find) {
         state.invst_monday = find.invst;
         const diffInvest = item.invst - find.invst;
+        state.bount_week = item.bounty - find.bounty;
         const findLevel = investPerLevel.find(
           (value) => item.level.toString().split("")[0] === value.levelRange
         );
@@ -113,7 +101,6 @@ export const handler = async (event) => {
   try {
     const apiRes = await fetch(`${apiUrl}/info/city/${guildId}`);
     const res = await apiRes.json();
-    // await batchWrite(res);
     const data = await scan(res);
     response.body = JSON.stringify(data);
   } catch (error) {
