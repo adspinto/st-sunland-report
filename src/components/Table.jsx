@@ -32,19 +32,23 @@ const columns = [
     footer: (info) => info.column.id,
   }),
   columnHelper.accessor("invst", {
-    header: "Investimentos atuais",
+    header: "Investimento total",
     footer: (info) => info.column.id,
   }),
   columnHelper.accessor("invst_monday", {
-    header: "Investimentos Segunda",
+    header: "Investimento salvo",
     footer: (info) => info.column.id,
   }),
   columnHelper.accessor("invst_sofar", {
-    header: "Soma Investimentos",
+    header: "Investimento semanal",
     footer: (info) => info.column.id,
   }),
   columnHelper.accessor("percent_invested", {
-    header: "Percentual",
+    header: "Percentual sobre meta",
+    footer: (info) => info.column.id,
+  }),
+  columnHelper.accessor("bounty_week", {
+    header: "Renome",
     footer: (info) => info.column.id,
   }),
 ];
