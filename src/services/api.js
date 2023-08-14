@@ -11,7 +11,6 @@ const error = (error) => {
 };
 const success = async (config) => {
   const authentication = await Auth.currentSession();
-  console.log("authentication", authentication);
   const token = authentication.idToken.jwtToken;
   config.headers.Authorization = token ? `Bearer ${token}` : "";
   return config;

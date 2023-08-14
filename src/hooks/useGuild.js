@@ -63,7 +63,6 @@ const useGuild = () => {
     select: useCallback((data) => data.map((item) => parseData(item)), []),
     // staleTime: 1000000,
   });
-  console.log(query);
   return query;
 };
 
