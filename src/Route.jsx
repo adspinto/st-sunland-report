@@ -1,10 +1,15 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Home from "./pages/Home";
+import Wrapper from "./layout/Wrapper";
 
 const screens = [
   {
     path: "/",
-    element: <Home />,
+    element: (
+      <Wrapper>
+        <Home />
+      </Wrapper>
+    ),
   },
 ];
 const router = createBrowserRouter(screens);

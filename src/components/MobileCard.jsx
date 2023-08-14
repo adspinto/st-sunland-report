@@ -33,6 +33,10 @@ const Item = ({ item }) => {
           <span>Percentual</span>
           <span> {item.percent_invested}</span>
         </li>
+        <li>
+          <span>Renome Semanal</span>
+          <span> {item.bount_week}</span>
+        </li>
       </ul>
     </div>
   );
@@ -43,7 +47,7 @@ function MobileCard({ data }) {
     <div>
       {data &&
         data.map((item) => {
-          return <Item item={item} />;
+          return <Item key={item._id} item={item} />;
         })}
     </div>
   );
