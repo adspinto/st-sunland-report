@@ -18,15 +18,15 @@ const Item = ({ item }) => {
           <span> {item.gld}</span>
         </li>
         <li>
-          <span>Investimentos Atuais</span>
+          <span>Investimento total</span>
           <span> {item.invst}</span>
         </li>
         <li>
-          <span>Investimentos Semanal</span>
+          <span>Investimento salvo</span>
           <span> {item.invst_monday}</span>
         </li>
         <li>
-          <span>Soma Investimentos</span>
+          <span>Investimento semanal</span>
           <span> {item.invst_sofar}</span>
         </li>
         <li>
