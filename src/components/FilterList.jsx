@@ -4,13 +4,12 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Collapse from "@mui/material/Collapse";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import ExpandLess from "@mui/icons-material/ExpandLess";
-import ExpandMore from "@mui/icons-material/ExpandMore";
-import StarBorder from "@mui/icons-material/StarBorder";
+import CheckBox from "@mui/icons-material/RadioButtonCheckedOutlined";
+import CheckBoxOutlineBlank from "@mui/icons-material/RadioButtonUncheckedOutlined";
+import { Context } from "../context/AppContext";
 
-export default function NestedList({ open, handleClick}) {
-
+export default function NestedList({ open }) {
+  const { setFilters, filtersList } = React.useContext(Context);
 
   return (
     <List
@@ -20,12 +19,24 @@ export default function NestedList({ open, handleClick}) {
     >
       <Collapse in={open} timeout="auto" unmountOnExit>
         <List component="div" disablePadding>
-          <ListItemButton sx={{ pl: 4 }}>
-            <ListItemIcon>
-              <StarBorder />
-            </ListItemIcon>
-            <ListItemText primary="Starred" />
-          </ListItemButton>
+          {filtersList.map((item) => {
+            return (
+              <ListItemButton
+                onClick={() =>
+                  setFilters({
+                    [item.filterStateName]: !item.value,
+                  })
+                }
+                key={item.filterStateName}
+                sx={{ pl: 4 }}
+              >
+                <ListItemIcon>
+                  {item.value ? <CheckBox /> : <CheckBoxOutlineBlank />}
+                </ListItemIcon>
+                <ListItemText primary={item.filterLabel} />
+              </ListItemButton>
+            );
+          })}
         </List>
       </Collapse>
     </List>
