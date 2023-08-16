@@ -1,7 +1,5 @@
-import * as React from "react";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
-import Button from "@mui/material/Button";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
@@ -10,10 +8,12 @@ import ListItemText from "@mui/material/ListItemText";
 import Groups from "@mui/icons-material/Groups";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import Logout from "@mui/icons-material/Logout";
-import Filter from "@mui/icons-material/Filter";
 import { Auth } from "aws-amplify";
+import { useContext, Fragment } from "react";
+import { Context } from "../context/AppContext";
 
-export default function TemporaryDrawer({ state, toggleDrawer }) {
+export default function TemporaryDrawer() {
+  const { toggleDrawer, drawerState: state } = useContext(Context);
   const Icons = {
     Username: {
       component: <AccountCircle />,
@@ -32,8 +32,7 @@ export default function TemporaryDrawer({ state, toggleDrawer }) {
           console.log("error signing out: ", error);
         }
       },
-    }
-  
+    },
   };
   const list = (anchor) => (
     <Box
@@ -67,7 +66,7 @@ export default function TemporaryDrawer({ state, toggleDrawer }) {
   return (
     <div>
       {["left"].map((anchor) => (
-        <React.Fragment key={anchor}>
+        <Fragment key={anchor}>
           <Drawer
             anchor={anchor}
             open={state[anchor]}
@@ -75,7 +74,7 @@ export default function TemporaryDrawer({ state, toggleDrawer }) {
           >
             {list(anchor)}
           </Drawer>
-        </React.Fragment>
+        </Fragment>
       ))}
     </div>
   );

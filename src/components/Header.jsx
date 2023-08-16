@@ -6,15 +6,16 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import { useContext } from "react";
 import { ColorModeContext } from "../context/Theme";
+import { Context } from "../context/AppContext";
 
-const Header = ({ user, toggleDrawer }) => {
+const Header = () => {
   const theme = useTheme();
   const colorMode = useContext(ColorModeContext);
+  const { toggleDrawer } = useContext(Context);
 
   return (
     <Box
       sx={{
-       
         bgcolor: "background.default",
         color: "text.primary",
         p: 3,
