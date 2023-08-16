@@ -7,7 +7,8 @@ import LinearProgress from "@mui/material/LinearProgress";
 import Variants from "../components/Variants";
 import Header from "../components/Header";
 import useUser from "../hooks/useUser";
-
+import { useTheme } from "@mui/material/styles";
+import Container from "@mui/material/Container";
 
 function Home() {
   const query = useGuild();
@@ -15,27 +16,38 @@ function Home() {
   const isDesktopOrLaptop = useMediaQuery({
     query: "(min-width: 1224px)",
   });
-
+  const theme = useTheme();
   if (!query.data) {
     return (
       <div>
         <LinearProgress />
         <Variants />
-        <br/>
+        <br />
         <Variants />
-        <br/>
+        <br />
         <Variants />
-        <br/>
+        <br />
         <Variants />
       </div>
     );
   }
 
   return (
-    <main>
-      {!isDesktopOrLaptop && <MobileCard data={query.data} />}
-      {isDesktopOrLaptop && <Table data={query.data} />}
-    </main>
+    <Container
+      sx={{
+        display: "flex",
+        width: "100%",
+        alignItems: "center",
+        justifyContent: "center",
+        bgcolor: "background.default",
+        color: "text.primary",
+        borderRadius: 1,
+        p: 3,
+      }}
+    >
+      {!isDesktopOrLaptop && <MobileCard theme={theme} data={query.data} />}
+      {isDesktopOrLaptop && <Table theme={theme} data={query.data} />}
+    </Container>
   );
 }
 
