@@ -12,7 +12,15 @@ const Header = ({ user, toggleDrawer }) => {
   const colorMode = useContext(ColorModeContext);
 
   return (
-    <Box className="header-container">
+    <Box
+      sx={{
+       
+        bgcolor: "background.default",
+        color: "text.primary",
+        p: 3,
+      }}
+      className="header-container"
+    >
       <h2>{"Relatório ST"}</h2>
       <Box>
         <IconButton
@@ -22,7 +30,12 @@ const Header = ({ user, toggleDrawer }) => {
         >
           {theme.palette.mode === "dark" ? <Brightness7 /> : <Brightness4 />}
         </IconButton>
-        <Button onClick={toggleDrawer("left", true)}>
+        <Button
+          sx={{
+            color: "text.primary",
+          }}
+          onClick={toggleDrawer("left", true)}
+        >
           <Menu />
         </Button>
       </Box>
