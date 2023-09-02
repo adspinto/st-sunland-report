@@ -17,7 +17,7 @@ function Home() {
   const query = useGuild();
 
 
-  const { autocompleteId, filtersList } = useContext(Context);
+  const { autocompleteId, filtersList, user } = useContext(Context);
   // const isDesktopOrLaptop = useMediaQuery({
   //   query: "(min-width: 1224px)",
   // });
@@ -109,7 +109,7 @@ function Home() {
       }}
     >
       <Filter players={players} />
-      <MobileCard theme={theme} data={queryData} />
+      <MobileCard theme={theme} data={queryData} user={user} />
       {/* {isDesktopOrLaptop && <Table theme={theme} data={queryData} />} */}
     </Container>
   );
