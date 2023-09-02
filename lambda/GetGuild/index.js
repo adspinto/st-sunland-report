@@ -47,7 +47,7 @@ const query = async (res, guildId) => {
   const items = await docClient.batchGet(params).promise();
   return res.data.members.map((item) => {
     try {
-      const find = items.Responses[process.env.TABLE_NAME].find((value) => value._id === item._id);
+      const find = items.Responses[guildId].find((value) => value._id === item._id);
       const state = {
         ...item,
       };
