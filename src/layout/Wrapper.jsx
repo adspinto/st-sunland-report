@@ -1,26 +1,19 @@
 import { useState } from "react";
 import Header from "../components/Header";
 import TemporaryDrawer from "../components/TemporaryDrawer";
+import Theme from "../context/Theme";
+import AppContext from "../context/AppContext";
 
 const Wrapper = ({ children }) => {
-  const [state, setState] = useState({
-    left: false,
-  });
 
-  const toggleDrawer = (anchor, open) => (event) => {
-    console.log("hihihihihihihihihihi")
-    if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
-      return;
-    }
-
-    setState({ ...state, [anchor]: open });
-  };
   return (
-    <>
-      <Header toggleDrawer={toggleDrawer} />
-      {children}
-      <TemporaryDrawer state={state} toggleDrawer={toggleDrawer} />
-    </>
+    <Theme>
+      <AppContext>
+        <Header />
+        {children}
+        <TemporaryDrawer />
+      </AppContext>
+    </Theme>
   );
 };
 

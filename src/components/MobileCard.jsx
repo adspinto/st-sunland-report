@@ -1,6 +1,6 @@
 import "../App.css";
 
-const Item = ({ item }) => {
+const Item = ({ item, guildName }) => {
   return (
     <div className="mobile-list-container">
       <h2>{`${item.name} - ${item.level}`}</h2>
@@ -18,21 +18,23 @@ const Item = ({ item }) => {
           <span> {item.gld}</span>
         </li>
         <li>
-          <span>Investimentos Atuais</span>
+          <span>Investimento total</span>
           <span> {item.invst}</span>
         </li>
         <li>
-          <span>Investimentos Semanal</span>
+          <span>Investimento salvo</span>
           <span> {item.invst_monday}</span>
         </li>
         <li>
-          <span>Soma Investimentos</span>
+          <span>Investimento semanal</span>
           <span> {item.invst_sofar}</span>
         </li>
-        <li>
-          <span>Percentual</span>
-          <span> {item.percent_invested}</span>
-        </li>
+        {guildName == "Sunland" && (
+          <li>
+            <span>Percentual</span>
+            <span> {item.percent_invested}</span>
+          </li>
+        )}
         <li>
           <span>Renome Semanal</span>
           <span> {item.bount_week}</span>
@@ -42,12 +44,13 @@ const Item = ({ item }) => {
   );
 };
 
-function MobileCard({ data }) {
+function MobileCard({ data, user }) {
+  const guildName = user ? user["custom:guildName"] : "";
   return (
     <div>
       {data &&
         data.map((item) => {
-          return <Item key={item._id} item={item} />;
+          return <Item guildName={guildName} key={item._id} item={item} />;
         })}
     </div>
   );

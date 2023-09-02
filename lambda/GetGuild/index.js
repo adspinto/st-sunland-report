@@ -1,6 +1,5 @@
 import AWS from "aws-sdk";
 const docClient = new AWS.DynamoDB.DocumentClient();
-
 const investPerLevel = [
   {
     levelRange: "4",
@@ -24,47 +23,31 @@ const investPerLevel = [
   },
 ];
 
-function isMonday() {
-  return new Date().getDay() === 1;
-}
-
-const parseDynamoItem = (item) => {
-  const obj = {};
-  Object.keys(item).forEach((key) => {
-    const value = item[key];
-
-    const assigned = {
-      [key]: value,
+const parseDynamoItems = (res, guildId) => {
+  const items = res.data.members.map((member) => {
+    return {
+      playerId: member._id,
+      playerName: member.name,
     };
-
-    if (key == "_id") {
-      assigned.playerId = item[key];
-    }
-
-    if (key == "name") {
-      assigned.playerName = item[key];
-    }
-
-    assigned.updatedAt = Math.floor(Date.now() / 1000);
-
-    Object.assign(obj, assigned);
   });
+
   return {
-    PutRequest: {
-      Item: obj,
+    RequestItems: {
+      [guildId]: {
+        Keys: items,
+      },
     },
+    ConsistentRead: false,
   };
 };
+// "error": "{\"message\":\"Missing required key 'TableName' in params\",\"code\":\"MissingRequiredParameter\",\"time\":\"2023-08-16T13:41:34.150Z\"}"
 
-
-const scan = async (res) => {
-  const params = {
-    TableName: process.env.TABLE_NAME,
-  };
-  const items = await docClient.scan(params).promise();
+const query = async (res, guildId) => {
+  const params = parseDynamoItems(res, guildId);
+  const items = await docClient.batchGet(params).promise();
   return res.data.members.map((item) => {
     try {
-      const find = items.Items.find((value) => value._id === item._id);
+      const find = items.Responses[guildId].find((value) => value._id === item._id);
       const state = {
         ...item,
       };
@@ -101,7 +84,7 @@ export const handler = async (event) => {
   try {
     const apiRes = await fetch(`${apiUrl}/info/city/${guildId}`);
     const res = await apiRes.json();
-    const data = await scan(res);
+    const data = await query(res, guildId);
     response.body = JSON.stringify(data);
   } catch (error) {
     response.statusCode = 400;
