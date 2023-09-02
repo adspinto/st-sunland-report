@@ -11,8 +11,8 @@ import { Context } from "../context/AppContext";
 const Header = () => {
   const theme = useTheme();
   const colorMode = useContext(ColorModeContext);
-  const { toggleDrawer } = useContext(Context);
-
+  const { toggleDrawer, user } = useContext(Context);
+  const guildName = user ? user["custom:guildName"] : "";
   return (
     <Box
       sx={{
@@ -22,7 +22,7 @@ const Header = () => {
       }}
       className="header-container"
     >
-      <h2>{"Relatório ST"}</h2>
+      <h2>{guildName || "Relatório ST"}</h2>
       <Box>
         <IconButton
           sx={{ ml: 1 }}

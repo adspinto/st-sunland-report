@@ -13,13 +13,14 @@ import { useContext, useMemo } from "react";
 import { Context } from "../context/AppContext";
 
 function Home() {
+ 
   const query = useGuild();
-  // const user = useUser();
+
 
   const { autocompleteId, filtersList } = useContext(Context);
-  const isDesktopOrLaptop = useMediaQuery({
-    query: "(min-width: 1224px)",
-  });
+  // const isDesktopOrLaptop = useMediaQuery({
+  //   query: "(min-width: 1224px)",
+  // });
 
   const theme = useTheme();
   const players = useMemo(
@@ -108,8 +109,8 @@ function Home() {
       }}
     >
       <Filter players={players} />
-      {!isDesktopOrLaptop && <MobileCard theme={theme} data={queryData} />}
-      {isDesktopOrLaptop && <Table theme={theme} data={queryData} />}
+      <MobileCard theme={theme} data={queryData} />
+      {/* {isDesktopOrLaptop && <Table theme={theme} data={queryData} />} */}
     </Container>
   );
 }

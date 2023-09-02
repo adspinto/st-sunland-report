@@ -1,9 +1,11 @@
 import { createContext, useMemo, useState } from "react";
+import useUser from "../hooks/useUser";
 
-const initialContext = { open, setOpen: () => {} };
+const initialContext = { open, setOpen: () => {}, user: {} };
 export const Context = createContext(initialContext);
 
 const AppContext = ({ children }) => {
+  const user = useUser();
   const [open, setOpen] = useState(false);
   const [autocompleteId, setAutocompleteId] = useState("");
   const [drawerState, setDrawerState] = useState({
@@ -84,8 +86,9 @@ const AppContext = ({ children }) => {
       filtersList,
       filters,
       setFilters,
+      user
     }),
-    [open, drawerState, autocompleteId, filters]
+    [open, drawerState, autocompleteId, filters, user]
   );
   return <Context.Provider value={value}>{children}</Context.Provider>;
 };

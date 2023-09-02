@@ -1,8 +1,11 @@
-import { useCallback } from "react";
+import { useCallback, useContext } from "react";
 import { useQuery } from "react-query";
 import api from "../services/api";
+import { Context } from "../context/AppContext";
 
 const useGuild = () => {
+  const { user } = useContext(Context);
+  const guildId = user["custom:guildId"];
   const formatDate = useCallback((date) => {
     try {
       const d = new Date(date);
@@ -51,7 +54,7 @@ const useGuild = () => {
   }, []);
 
   const getGuild = async () => {
-    const response = await api.get("/guild?guildId=602c9314205dd81334f53da1");
+    const response = await api.get(`/guild?guildId=${guildId}`);
 
     return response.data;
   };
@@ -61,7 +64,7 @@ const useGuild = () => {
     queryKey: "602c9314205dd81334f53da1",
     refetchOnWindowFocus: false,
     select: useCallback((data) => data.map((item) => parseData(item)), []),
-    // staleTime: 1000000,
+    enabled: !!guildId,
   });
   return query;
 };
