@@ -23,7 +23,7 @@ const investPerLevel = [
   },
 ];
 
-const parseDynamoItems = (res) => {
+const parseDynamoItems = (res, guildId) => {
   const items = res.data.members.map((member) => {
     return {
       playerId: member._id,
@@ -33,7 +33,7 @@ const parseDynamoItems = (res) => {
 
   return {
     RequestItems: {
-      [process.env.TABLE_NAME]: {
+      [guildId]: {
         Keys: items,
       },
     },
@@ -42,8 +42,8 @@ const parseDynamoItems = (res) => {
 };
 // "error": "{\"message\":\"Missing required key 'TableName' in params\",\"code\":\"MissingRequiredParameter\",\"time\":\"2023-08-16T13:41:34.150Z\"}"
 
-const query = async (res) => {
-  const params = parseDynamoItems(res);
+const query = async (res, guildId) => {
+  const params = parseDynamoItems(res, guildId);
   const items = await docClient.batchGet(params).promise();
   return res.data.members.map((item) => {
     try {
@@ -84,7 +84,7 @@ export const handler = async (event) => {
   try {
     const apiRes = await fetch(`${apiUrl}/info/city/${guildId}`);
     const res = await apiRes.json();
-    const data = await query(res);
+    const data = await query(res, guildId);
     response.body = JSON.stringify(data);
   } catch (error) {
     response.statusCode = 400;

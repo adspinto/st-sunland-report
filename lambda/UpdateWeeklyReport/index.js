@@ -1,7 +1,6 @@
 import AWS from "aws-sdk";
 const docClient = new AWS.DynamoDB.DocumentClient();
 
-
 function isMonday() {
   return new Date().getDay() === 1;
 }
@@ -34,22 +33,19 @@ const parseDynamoItem = (item) => {
   };
 };
 
-const batchWrite = async (res) => {
+const batchWrite = async (res, guildId) => {
   const shouldWrite = isMonday();
-  console.log("shouldWrite", shouldWrite, new Date().getDay())
-  if (shouldWrite) {
-    const data = res.data.members.map((item) => parseDynamoItem(item));
-    const params = {
-      RequestItems: {
-        [process.env.TABLE_NAME]: data,
-      },
-    };
+  console.log("shouldWrite", shouldWrite, new Date().getDay());
 
-    await docClient.batchWrite(params).promise();
-  }
+  const data = res.data.members.map((item) => parseDynamoItem(item));
+  const params = {
+    RequestItems: {
+      [guildId]: data,
+    },
+  };
+
+  await docClient.batchWrite(params).promise();
 };
-
-
 
 export const handler = async (event) => {
   const apiUrl = process.env.SMARTY_API_URL;
@@ -69,10 +65,10 @@ export const handler = async (event) => {
     const apiRes = await fetch(`${apiUrl}/info/city/${guildId}`);
     console.log("getting smarty data");
     const res = await apiRes.json();
-    console.log("start batch write")
-    await batchWrite(res);
-    console.log("batch write finished")
-    response.body = JSON.stringify({message: "Write completed!"});
+    console.log("start batch write");
+    await batchWrite(res, guildId);
+    console.log("batch write finished");
+    response.body = JSON.stringify({ message: "Write completed!" });
   } catch (error) {
     response.statusCode = 400;
     response.body = JSON.stringify({
