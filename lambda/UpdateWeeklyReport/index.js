@@ -47,6 +47,14 @@ const batchWrite = async (res, guildId) => {
   await docClient.batchWrite(params).promise();
 };
 
+const batchDelete = async (chosen) => {
+  try {
+      const deleted = await docClient.batchDelete(chosen)
+  } catch (error) {
+    console.log("error while trying to delete", error)
+  }
+}
+
 export const handler = async (event) => {
   const apiUrl = process.env.SMARTY_API_URL;
   const guildId = event.queryStringParameters.guildId;

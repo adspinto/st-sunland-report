@@ -1,8 +1,7 @@
 import AWS from "aws-sdk";
 const docClient = new AWS.DynamoDB.DocumentClient();
 
-const parseDynamoItemsGET = (res, guildId) => {
-  
+const parseDynamoItemsGET = (res, tableName) => {
   const items = res.data.members.map((member) => {
     return {
       playerId: member._id,
@@ -12,13 +11,24 @@ const parseDynamoItemsGET = (res, guildId) => {
 
   return {
     RequestItems: {
-      [guildId]: {
+      [tableName]: {
         Keys: items,
       },
     },
     ConsistentRead: false,
   };
 };
+
+const valuesToStoreMultiple = () => [
+  "bounty",
+  "gld",
+  "invst",
+  "level",
+  "prest",
+  "ascendUpg",
+  "collection",
+  "help",
+];
 
 const parseDynamoItem = (item, find = {}) => {
   const obj = {};
