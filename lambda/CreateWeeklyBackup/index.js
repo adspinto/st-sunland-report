@@ -2,7 +2,7 @@ import AWS from "aws-sdk";
 const docClient = new AWS.DynamoDB.DocumentClient();
 
 const parseDynamoItemsGET = (res, guildId) => {
-  console
+  
   const items = res.data.members.map((member) => {
     return {
       playerId: member._id,
