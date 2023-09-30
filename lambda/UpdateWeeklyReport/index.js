@@ -1,9 +1,33 @@
 import AWS from "aws-sdk";
 const docClient = new AWS.DynamoDB.DocumentClient();
 
-function isMonday() {
-  return new Date().getDay() === 1;
-}
+const parseDynamoItemsGET = (res, tableName) => {
+  const items = res.data.members.map((member) => {
+    return {
+      playerId: member._id,
+      playerName: member.name,
+    };
+  });
+
+  return {
+    RequestItems: {
+      [tableName]: {
+        Keys: items,
+      },
+    },
+    ConsistentRead: false,
+  };
+};
+
+const getPreviousData = async (res, tableName) => {
+  try {
+    const params = parseDynamoItemsGET(res, tableName);
+    const items = await docClient.batchGet(params).promise();
+    return items.Responses[tableName];
+  } catch (error) {
+    console.log("error", error);
+  }
+};
 
 const parseDynamoItem = (item) => {
   const obj = {};
@@ -26,6 +50,7 @@ const parseDynamoItem = (item) => {
 
     Object.assign(obj, assigned);
   });
+
   return {
     PutRequest: {
       Item: obj,
@@ -33,10 +58,8 @@ const parseDynamoItem = (item) => {
   };
 };
 
-const batchWrite = async (res, guildId) => {
-  const shouldWrite = isMonday();
-  console.log("shouldWrite", shouldWrite, new Date().getDay());
-
+const batchWrite = async (res, guildId, previousData) => {
+  // const dataToDelete = previousData.filter()
   const data = res.data.members.map((item) => parseDynamoItem(item));
   const params = {
     RequestItems: {
@@ -47,17 +70,10 @@ const batchWrite = async (res, guildId) => {
   await docClient.batchWrite(params).promise();
 };
 
-const batchDelete = async (chosen) => {
-  try {
-      const deleted = await docClient.batchDelete(chosen)
-  } catch (error) {
-    console.log("error while trying to delete", error)
-  }
-}
-
 export const handler = async (event) => {
   const apiUrl = process.env.SMARTY_API_URL;
   const guildId = event.queryStringParameters.guildId;
+  const gId = event.queryStringParameters.gId;
   console.log("guildId", guildId);
   const response = {
     statusCode: 200,
@@ -70,13 +86,16 @@ export const handler = async (event) => {
   };
   try {
     console.log("starting the request");
-    const apiRes = await fetch(`${apiUrl}/info/city/${guildId}`);
+    const apiRes = await fetch(`${apiUrl}/info/city/${gId || guildId}`);
     console.log("getting smarty data");
     const res = await apiRes.json();
-    console.log("start batch write");
-    await batchWrite(res, guildId);
-    console.log("batch write finished");
-    response.body = JSON.stringify({ message: "Write completed!" });
+
+    const previousData = await getPreviousData(res, guildId);
+
+    console.log("start batch write", previousData);
+    // await batchWrite(res, guildId, previousData);
+    // console.log("batch write finished");
+    // response.body = JSON.stringify({ message: "Write completed!" });
   } catch (error) {
     response.statusCode = 400;
     response.body = JSON.stringify({
