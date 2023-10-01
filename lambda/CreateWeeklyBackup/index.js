@@ -47,12 +47,18 @@ const valuesToStoreMultiple = (key, value, previousValue) => {
     : JSON.stringify([value]);
 };
 
-const parseAssign = (previous, current) => {
-  const parsedUpdatedAt = JSON?.parse(previous) || [];
-  return JSON.stringify([...parsedUpdatedAt, current]);
+const parseAssign = (previous, current, key) => {
+  console.log(key);
+  try {
+    const parsedUpdatedAt = JSON.parse(previous);
+    return JSON.stringify([...parsedUpdatedAt, current]);
+  } catch (error) {
+    console.log("error parseAssign", error);
+    return JSON.stringify([current]);
+  }
 };
 
-const parseDynamoItem = (item, find = {}) => {
+const parseDynamoItem = (item, find = {}, findSmarty = {}) => {
   const obj = {};
   Object.keys(item).forEach((key) => {
     const value = item[key];
@@ -76,13 +82,30 @@ const parseDynamoItem = (item, find = {}) => {
       assigned.name = item[key];
     }
 
-    if (previousValue?.updatedAt) {
+    try {
+      const currentInvst = JSON.parse(item["invst"]);
+      if (key == "invst") {
+        console.log("it ran in invst so far")
+        if (previousValue) {
+          const previousInvst = JSON.parse(previousValue);
+          const diff = currentInvst - previousInvst[previousValue.length - 1];
+          assigned.invst_sofar = parseAssign(previousValue, diff, key);
+        }
+      } else {
+        console.log("it ran in else")
+        const diff = findSmarty["invst"] - currentInvst;
+        assigned.invst_sofar = JSON.stringify([diff]);
+      }
+    } catch (error) {
+      console.log("error while calc invst_sofar", error);
+    }
+
+    if (key == "updatedAt") {
       assigned.updatedAt = parseAssign(
-        previousValue.updatedAt,
-        Math.floor(Date.now() / 1000)
+        previousValue,
+        Math.floor(Date.now() / 1000),
+        key
       );
-    } else {
-      assigned.updatedAt = JSON.stringify([Math.floor(Date.now() / 1000)]);
     }
 
     Object.assign(obj, assigned);
@@ -104,7 +127,7 @@ const getPreviousData = async (res, tableName) => {
   }
 };
 
-const getCurentDataByScan = async (guildId) => {
+const getCurrentDataByScan = async (guildId) => {
   try {
     const params = {
       TableName: guildId,
@@ -116,11 +139,17 @@ const getCurentDataByScan = async (guildId) => {
   }
 };
 
-const batchWrite = async (currentData, tableName, previousData = []) => {
+const batchWrite = async (
+  currentData,
+  tableName,
+  previousData = [],
+  smartyRes
+) => {
   const data = currentData.map((item) => {
     try {
       const find = previousData.find((pItem) => pItem._id === item._id);
-      return parseDynamoItem(item, find);
+      const findSmarty = smartyRes.find((sItem) => sItem._id === item._id);
+      return parseDynamoItem(item, find, findSmarty);
     } catch (error) {
       console.log("error while trying to backup", error);
       return parseDynamoItem(item);
@@ -141,6 +170,7 @@ const batchWrite = async (currentData, tableName, previousData = []) => {
 export const handler = async (event) => {
   const apiUrl = process.env.SMARTY_API_URL;
   const guildId = event.queryStringParameters.guildId;
+  const gId = event.queryStringParameters.gId;
   const tableName = event.queryStringParameters.tableName;
   console.log("guildId", guildId);
   console.log("guildId", tableName);
@@ -155,15 +185,19 @@ export const handler = async (event) => {
   };
   try {
     console.log("starting the request");
-    console.log("GET current Data");
-    const currentData = await getCurentDataByScan(guildId);
+    const apiRes = await fetch(`${apiUrl}/info/city/${gId || guildId}`);
+    const res = await apiRes.json();
+    console.log("GET current Data", res);
+    const currentData = await getCurrentDataByScan(guildId);
     console.log("GET Previous Data");
     const previousData = await getPreviousData(currentData, tableName);
     console.log("start batch write", previousData);
-    await batchWrite(currentData, tableName, previousData);
+    const data = res.data.members || [];
+    await batchWrite(currentData, tableName, previousData, data);
     console.log("batch write finished");
     response.body = JSON.stringify({ message: "Write completed!" });
   } catch (error) {
+    console.log("error whole", error);
     response.statusCode = 400;
     response.body = JSON.stringify({
       message: "Could not perform the operation, try again.",
