@@ -87,28 +87,6 @@ const batchDelete = async (res, guildId, previousData) => {
   }
 };
 
-const batchDelete = async (res, guildId, previousData) => {
-  const ids = res.data.members.map((item) => item._id);
-  const data = previousData
-    .filter((pItem) => !ids.includes(pItem._id))
-    .map((item) => {
-      return {
-        DeleteRequest: {
-          Key: { playerId: item.playerId, playerName: item.playerName },
-        },
-      };
-    });
-  const params = {
-    RequestItems: {
-      [guildId]: data,
-    },
-  };
-
-  if (data.length > 0) {
-    await docClient.batchWrite(params).promise();
-  }
-};
-
 export const handler = async (event) => {
   const apiUrl = process.env.SMARTY_API_URL;
   const guildId = event.queryStringParameters.guildId;
