@@ -29,11 +29,14 @@ const valuesToStoreMultiple = (key, value, previousValue) => {
     "ascendUpg",
     "collection",
     "help",
+    "bounty_monday",
+    "invst_monday",
   ];
   const shouldMultiple = multiple.includes(key);
   if (!shouldMultiple) {
     return value;
   }
+
   const parsePrevious =
     typeof previousValue === "string"
       ? JSON.parse(previousValue)
@@ -42,6 +45,11 @@ const valuesToStoreMultiple = (key, value, previousValue) => {
   return previousValue
     ? JSON.stringify([...parsePrevious, value])
     : JSON.stringify([value]);
+};
+
+const parseAssign = (previous, current) => {
+  const parsedUpdatedAt = JSON?.parse(previous) || [];
+  return JSON.stringify([...parsedUpdatedAt, current]);
 };
 
 const parseDynamoItem = (item, find = {}) => {
@@ -68,9 +76,14 @@ const parseDynamoItem = (item, find = {}) => {
       assigned.name = item[key];
     }
 
-    assigned.updatedAt = previousValue?.updatedAt
-      ? JSON.stringify([previousValue.updatedAt, Math.floor(Date.now() / 1000)])
-      : JSON.stringify([Math.floor(Date.now() / 1000)]);
+    if (previousValue?.updatedAt) {
+      assigned.updatedAt = parseAssign(
+        previousValue.updatedAt,
+        Math.floor(Date.now() / 1000)
+      );
+    } else {
+      assigned.updatedAt = JSON.stringify([Math.floor(Date.now() / 1000)]);
+    }
 
     Object.assign(obj, assigned);
   });
