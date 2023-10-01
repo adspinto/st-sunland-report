@@ -11,9 +11,11 @@ import Logout from "@mui/icons-material/Logout";
 import { Auth } from "aws-amplify";
 import { useContext, Fragment } from "react";
 import { Context } from "../context/AppContext";
+import { useNavigate } from "react-router-dom";
 
 export default function TemporaryDrawer() {
   const { toggleDrawer, drawerState: state } = useContext(Context);
+  const navigate = useNavigate()
   const Icons = {
     Username: {
       component: <AccountCircle />,
@@ -22,6 +24,13 @@ export default function TemporaryDrawer() {
     Guild: {
       component: <Groups />,
       onClick: () => {},
+    },
+    Historico: {
+      component: <Logout id="history" />,
+      onClick: () => {
+        console.log("testando")
+        navigate("/history")
+      },
     },
     Sair: {
       component: <Logout id="logout" />,
@@ -39,11 +48,12 @@ export default function TemporaryDrawer() {
       sx={{ width: anchor === "top" || anchor === "bottom" ? "auto" : 250 }}
       role="presentation"
       onClick={(event) => {
-        if (event.target.id === "logout" || event.target.innerText === "Sair") {
+        if (event.target.id === "logout" || event.target.innerText === "Sair" || event.target.id === "history"  ||  event.target.innerText === "Historico") {
           const value =
             event.target.id === "logout" ? "Sair" : event.target.innerText;
 
           Icons[value].onClick();
+          toggleDrawer(anchor, false)(event);
         } else {
           toggleDrawer(anchor, false)(event);
         }
@@ -51,7 +61,7 @@ export default function TemporaryDrawer() {
       onKeyDown={toggleDrawer(anchor, false)}
     >
       <List>
-        {["Username", "Guild", "Sair"].map((text, index) => (
+        {["Username", "Guild", "Historico", "Sair"].map((text, index) => (
           <ListItem key={text} disablePadding>
             <ListItemButton>
               <ListItemIcon>{Icons[text].component}</ListItemIcon>
