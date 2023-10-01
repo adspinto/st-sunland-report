@@ -3,8 +3,10 @@ const docClient = new AWS.DynamoDB.DocumentClient();
 
 const multiple = [
   "bounty",
+  "bounty_monday",
   "gld",
   "invst",
+  "invst_monday",
   "level",
   "prest",
   "ascendUpg",

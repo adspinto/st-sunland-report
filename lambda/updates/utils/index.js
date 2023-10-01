@@ -26,6 +26,8 @@ export const valuesToStoreMultiple = (key, value, previousValue) => {
     "ascendUpg",
     "collection",
     "help",
+    "bounty_monday",
+    "invst_monday",
   ];
   const shouldMultiple = multiple.includes(key);
   if (!shouldMultiple) {
