@@ -47,3 +47,8 @@ variable "st_report_api" {
   type    = string
   default = "st-report-api"
 }
+
+variable "environment" {
+  type    = string
+  default = "dev"
+}
