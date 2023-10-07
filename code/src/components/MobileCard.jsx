@@ -1,6 +1,6 @@
 import "../App.css";
 
-const Item = ({ item, guildName }) => {
+const Item = ({ item }) => {
   return (
     <div className="mobile-list-container">
       <h2>{`${item.name} - ${item.level}`}</h2>
@@ -29,12 +29,7 @@ const Item = ({ item, guildName }) => {
           <span>Investimento semanal</span>
           <span> {item.invst_sofar}</span>
         </li>
-        {guildName == "Sunland" && (
-          <li>
-            <span>Percentual</span>
-            <span> {item.percent_invested}</span>
-          </li>
-        )}
+
         <li>
           <span>Renome Semanal</span>
           <span> {item.bount_week}</span>
