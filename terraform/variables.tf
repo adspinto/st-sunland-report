@@ -41,3 +41,9 @@ variable "create_guild_backup_role" {
   type    = string
   default = "arn:aws:iam::410741923613:role/service-role/CreateWeeklyBackup-role-h59b5hyr" // change this field to have the table name in the tag
 }
+
+
+variable "st_report_api" {
+  type    = string
+  default = "st-report-api"
+}
