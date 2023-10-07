@@ -1,5 +1,6 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Home from "./pages/Home";
+import History from "./pages/History"
 import Wrapper from "./layout/Wrapper";
 
 const screens = [
@@ -8,6 +9,14 @@ const screens = [
     element: (
       <Wrapper>
         <Home />
+      </Wrapper>
+    ),
+  },
+  {
+    path: "/history",
+    element: (
+      <Wrapper>
+        <History />
       </Wrapper>
     ),
   },

@@ -1,10 +1,6 @@
 import AWS from "aws-sdk";
 const docClient = new AWS.DynamoDB.DocumentClient();
 
-function isMonday() {
-  return new Date().getDay() === 1;
-}
-
 const parseDynamoItem = (item) => {
   const obj = {};
   Object.keys(item).forEach((key) => {
@@ -26,6 +22,7 @@ const parseDynamoItem = (item) => {
 
     Object.assign(obj, assigned);
   });
+  
   return {
     PutRequest: {
       Item: obj,
@@ -34,9 +31,6 @@ const parseDynamoItem = (item) => {
 };
 
 const batchWrite = async (res, guildId) => {
-  const shouldWrite = isMonday();
-  console.log("shouldWrite", shouldWrite, new Date().getDay());
-
   const data = res.data.members.map((item) => parseDynamoItem(item));
   const params = {
     RequestItems: {

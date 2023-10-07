@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import "../App.css";
 import useGuild from "../hooks/useGuild";
 import Table from "../components/Table";
@@ -12,22 +13,13 @@ import { Box } from "@mui/material";
 import { useContext, useMemo } from "react";
 import { Context } from "../context/AppContext";
 
-function Home() {
- 
-  const query = useGuild();
-
-
+function History({ query }) {
   const { autocompleteId, filtersList, user } = useContext(Context);
   // const isDesktopOrLaptop = useMediaQuery({
   //   query: "(min-width: 1224px)",
   // });
 
   const theme = useTheme();
-  const players = useMemo(
-    () => query?.data?.map((item) => ({ label: item.name, _id: item._id })),
-    [query.data]
-  );
-
   const queryData = useMemo(() => {
     let data = query?.data || [];
 
@@ -74,6 +66,7 @@ function Home() {
 
     return data;
   }, [autocompleteId, query.data, filtersList]);
+
   if (!query.data) {
     return (
       <Box
@@ -95,24 +88,7 @@ function Home() {
     );
   }
 
-  return (
-    <Container
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        width: "100%",
-        alignItems: "center",
-        justifyContent: "center",
-        bgcolor: "background.default",
-        color: "text.primary",
-        p: 3,
-      }}
-    >
-      <Filter players={players} />
-      <MobileCard theme={theme} data={queryData} user={user} />
-      {/* {isDesktopOrLaptop && <Table theme={theme} data={queryData} />} */}
-    </Container>
-  );
+  return <MobileCard theme={theme} data={queryData} user={user} />;
 }
 
-export default Home;
+export default History;

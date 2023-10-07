@@ -1,4 +1,3 @@
-import { useState } from "react";
 import Header from "../components/Header";
 import TemporaryDrawer from "../components/TemporaryDrawer";
 import Theme from "../context/Theme";

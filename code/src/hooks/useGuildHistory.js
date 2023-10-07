@@ -2,15 +2,18 @@ import { useCallback, useContext } from "react";
 import { useQuery } from "react-query";
 import api from "../services/api";
 import { Context } from "../context/AppContext";
+import { useQueryClient } from "react-query";
 
-const useGuild = () => {
+const useGuildHistory = () => {
   const { user } = useContext(Context);
   const guildId = user["custom:guildId"];
+  const queryClient = useQueryClient();
+
   const formatDate = useCallback((date) => {
     try {
-      const d = new Date(date);
+      const d = new Date(date * 1000);
       const day = d.getDate();
-      const month = d.getMonth();
+      const month = d.getMonth() + 1;
       const year = d.getFullYear();
       return `${day.toString().length <= 1 ? "0" + day : day}/${
         month.toString().length <= 1 ? "0" + month : month
@@ -35,38 +38,40 @@ const useGuild = () => {
       return value;
     }
   }, []);
-  const parseData = useCallback((item) => {
+  const parseKeyData = useCallback((item) => {
     const nextItem = item;
 
-    nextItem.invst_sofar = item.invst - item.invst_monday;
-    nextItem.invst_sofar = moneyMask(nextItem.invst_sofar);
-    nextItem.gld = moneyMask(nextItem.gld);
-    nextItem.invst = moneyMask(item.invst);
-    nextItem.invst_monday = moneyMask(item.invst_monday);
-    nextItem.joined = formatDate(nextItem.joined);
-    nextItem.activity = formatDate(nextItem.activity);
-    if (nextItem.percent_invested) {
-      nextItem.percent_invested = `${(nextItem.percent_invested * 100).toFixed(
-        0
-      )}%`;
-    }
+    nextItem.parsed = formatDate(nextItem.key / 1000);
+    // nextItem.invst_sofar = invst_sofar;
+    // nextItem.invst_sofar = nextItem.invst_sofar.map((item) => moneyMask(item));
+    // nextItem.gld = nextItem.gld.map((item) => moneyMask(item));
+    // nextItem.invst = nextItem.invst.map((item) => moneyMask(item));
+    // nextItem.invst_monday = nextItem.invst.map((item) => moneyMask(item));
+    // nextItem.updatedAt = nextItem.updatedAt.map((item) => formatDate(item));
+
     return nextItem;
   }, []);
 
-  const getGuild = async () => {
-    const response = await api.get(`/guild?guildId=${guildId}`);
+  const getGuildHistory = async () => {
+    const response = await api.get(`/guild/history?guildId=${guildId}`);
 
     return response.data;
   };
 
+  const getGuildHistoryObject = async () => {
+    
+  }
+
   const query = useQuery({
-    queryFn: getGuild,
-    queryKey: "602c9314205dd81334f53da1",
+    queryFn: getGuildHistory,
+    queryKey: ["history", guildId],
     refetchOnWindowFocus: false,
-    select: useCallback((data) => data.map((item) => parseData(item)), []),
+    select: useCallback((data) => data.map((item) => parseKeyData(item)), []),
     enabled: !!guildId,
   });
-  return query;
+  return {
+    historyKeys: query.data,
+  };
 };
 
-export default useGuild;
+export default useGuildHistory;

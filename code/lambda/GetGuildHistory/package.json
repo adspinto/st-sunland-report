@@ -1,9 +1,8 @@
 {
-  "name": "getguild",
+  "name": "getguildhistory",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -11,6 +10,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "aws-sdk": "^2.1432.0"
+    "aws-sdk": "^2.1467.0"
   }
 }
