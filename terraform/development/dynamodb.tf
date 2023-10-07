@@ -1,9 +1,9 @@
-resource "aws_dynamodb_table" "create-guild-table" {
+resource "aws_dynamodb_table" "create_guild_table" {
   lifecycle {
     prevent_destroy = true
   }
 
-  name           = var.guild_id
+  name           = "${var.environment}-${var.guild_id}"
   billing_mode   = "PROVISIONED"
   read_capacity  = 1
   write_capacity = 1
@@ -21,6 +21,6 @@ resource "aws_dynamodb_table" "create-guild-table" {
   }
 
   tags = {
-    guildName    = var.guild_name
+    guildName = "${var.environment}-${var.guild_name}"
   }
 }
