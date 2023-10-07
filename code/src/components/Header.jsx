@@ -11,8 +11,8 @@ import { Context } from "../context/AppContext";
 const Header = () => {
   const theme = useTheme();
   const colorMode = useContext(ColorModeContext);
-  const { toggleDrawer, user } = useContext(Context);
-  const guildName = user ? user["custom:guildName"] : "";
+  const { toggleDrawer } = useContext(Context);
+  const guildName =  "Relatório" //user ? user["custom:guildName"] : "";
   return (
     <Box
       sx={{

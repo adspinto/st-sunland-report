@@ -1,11 +1,32 @@
-import { useCallback, useContext } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import api from "../services/api";
 import { Context } from "../context/AppContext";
+import { useSearchParams } from "react-router-dom";
 
 const useGuild = () => {
   const { user } = useContext(Context);
-  const guildId = user["custom:guildId"];
+  const [searchParams] = useSearchParams();
+  const [guild, setGuildId] = useState("");
+
+  useEffect(() => {
+    try {
+      if (user["custom:guildId"]) {
+        const guildIdfromParam = searchParams.get("guildId");
+        const guildId = user["custom:guildId"].split(",");
+        let currentGuildId = "";
+        if (guildId.includes(guildIdfromParam)) {
+          currentGuildId = guildIdfromParam;
+        } else {
+          currentGuildId = guildId[0];
+        }
+
+        setGuildId(currentGuildId);
+      }
+    } catch (error) {
+      console.log("error no split", error, user);
+    }
+  }, [searchParams, user]);
   const formatDate = useCallback((date) => {
     try {
       const d = new Date(date);
@@ -54,7 +75,7 @@ const useGuild = () => {
   }, []);
 
   const getGuild = async () => {
-    const response = await api.get(`/guild?guildId=${guildId}`);
+    const response = await api.get(`/guild?guildId=${guild}`);
 
     return response.data;
   };
@@ -64,7 +85,7 @@ const useGuild = () => {
     queryKey: "602c9314205dd81334f53da1",
     refetchOnWindowFocus: false,
     select: useCallback((data) => data.map((item) => parseData(item)), []),
-    enabled: !!guildId,
+    enabled: !!guild,
   });
   return query;
 };

@@ -1,7 +1,5 @@
 import "../App.css";
 import useGuild from "../hooks/useGuild";
-import Table from "../components/Table";
-import { useMediaQuery } from "react-responsive";
 import MobileCard from "../components/MobileCard";
 import LinearProgress from "@mui/material/LinearProgress";
 import Variants from "../components/Variants";
