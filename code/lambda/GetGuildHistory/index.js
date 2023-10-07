@@ -1,36 +1,14 @@
 import AWS from "aws-sdk";
-const docClient = new AWS.DynamoDB.DocumentClient();
+const s3 = new AWS.S3();
 
-const multiple = [
-  "bounty",
-  "bounty_monday",
-  "gld",
-  "invst",
-  "invst_monday",
-  "level",
-  "prest",
-  "ascendUpg",
-  "collection",
-  "help",
-  "updatedAt"
-];
-
-const query = async (guildId) => {
-  const params = {
-    TableName: `historico_${guildId}`,
+const listObjects = async (guildId) => {
+  const data = {
+    Bucket: "reports-st",
+    Delimiter: "/",
+    Prefix: `${guildId}/`,
   };
-  const response = await docClient.scan(params).promise();
 
-  return response.Items.map((item) => {
-    const keys = Object.keys(item);
-    const nextItem = item;
-    keys.map((kItem) => {
-      if (multiple.includes(kItem)) {
-        nextItem[kItem] = JSON.parse(nextItem[kItem]);
-      }
-    });
-    return nextItem;
-  });
+  return s3.listObjects(data).promise();
 };
 
 export const handler = async (event) => {
@@ -45,7 +23,16 @@ export const handler = async (event) => {
     body: JSON.stringify(guildId),
   };
   try {
-    const data = await query(guildId);
+    const objects = await listObjects(guildId);
+    const data = await Promise.all(objects.Contents.filter((fItem) => fItem.Size).map((item) => {
+      const key = item.Key.replaceAll(`${guildId}`, "")
+        .replaceAll("/", "")
+        .replaceAll(".json", "");
+
+      return {
+        key,
+      };
+    }));
     response.body = JSON.stringify(data);
     return response;
   } catch (error) {
