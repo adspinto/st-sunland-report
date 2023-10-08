@@ -11,8 +11,10 @@ resource "aws_s3_bucket" "history_bucket" {
 }
 
 resource "aws_s3_object" "directory_structure" {
+
+  for_each     = toset(var.guilds) // to set is used because regular array is not planned
   bucket       = aws_s3_bucket.history_bucket.id
-  key          = "${var.guild_id}/"
+  key          = "${each.value}/"
   content_type = "application/x-directory"
 }
 

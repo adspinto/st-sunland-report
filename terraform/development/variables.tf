@@ -52,3 +52,13 @@ variable "environment" {
   type    = string
   default = "dev"
 }
+
+
+variable "guilds" {
+  type        = list(string)
+  description = "List of guild ids"
+  default = [
+    "6282e355ddc01812f52e04f3",
+    "60d09216ce4acb13323a1109"
+  ]
+}
