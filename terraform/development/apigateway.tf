@@ -39,7 +39,7 @@ resource "aws_api_gateway_deployment" "st_report_api" {
 resource "aws_api_gateway_stage" "st_report_api" {
   deployment_id        = aws_api_gateway_deployment.st_report_api.id
   rest_api_id          = aws_api_gateway_rest_api.st_report_api.id
-  stage_name           = var.env
+  stage_name           = "${var.environment}-st-report-api"
   xray_tracing_enabled = true
 }
 

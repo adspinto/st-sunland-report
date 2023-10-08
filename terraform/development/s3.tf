@@ -5,8 +5,8 @@ resource "aws_s3_bucket" "history_bucket" {
     prevent_destroy = true
   }
   tags = {
-    Name        = "${var.environment}-${var.reports_bucket_tag}"
-    Environment = var.env
+    Name        = "${var.environment}-${var.bucket_name}"
+    Environment = var.environment
   }
 }
 
