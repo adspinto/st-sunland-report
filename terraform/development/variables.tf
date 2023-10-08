@@ -30,3 +30,14 @@ variable "guilds" {
   type        = list(string)
   description = "List of guild ids"
 }
+
+variable "update_weekly_report" {
+  type        = string
+  description = "update_weekly_report role"
+}
+
+
+variable "lambdas" {
+  type        = list(string)
+  description = "List of lambdas"
+}
