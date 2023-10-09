@@ -38,6 +38,6 @@ variable "update_weekly_report" {
 
 
 variable "lambdas" {
-  type        = list(string)
+  type        = list
   description = "List of lambdas"
 }

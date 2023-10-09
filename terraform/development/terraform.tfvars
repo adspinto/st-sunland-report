@@ -22,6 +22,13 @@ lambdas = [
       "s3:DeleteObject"
     ]
   },
+  {
+    name = "GetGuild"
+    action = [
+      "s3:GetObject",
+      "s3:ListBucket",
+    ]
+  },
 
 ]
 
