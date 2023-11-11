@@ -57,10 +57,10 @@ const parseMembers = async (list = []) => {
     list.map(async (item, index) => {
       try {
         // console.log("ittttem", item);
-        const nextIndex = index + 1;
+        const nextIndex = index - 1;
         console.log(index, nextIndex);
         if (nextIndex < list.length) {
-          const next = deriveResponse(item.members, list[nextIndex].members);
+          const next = deriveResponse(list[nextIndex].members, item.members);
           item.members = next;
         }
         return item;
@@ -136,7 +136,6 @@ export const handler = async (event) => {
 //   };
 //   const response = await docClient.scan(params).promise();
 //   console.log(response.Items);
-
 
 //   fs.writeFile("date.json", JSON.stringify(response.Items), (err) => {
 //     if (err) console.log(err);

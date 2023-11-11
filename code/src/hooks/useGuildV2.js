@@ -58,16 +58,19 @@ const useGuildV2 = () => {
   }, []);
 
   const splitCurrency = (item) => {
-    
-    const split = item.split(",");
-    let nextItem = item;
-    if (split.length > 3) {
-      nextItem = split[0] + "G";
+    try {
+      const split = item.split(",");
+      let nextItem = item;
+      if (split.length > 3) {
+        nextItem = split[0] + "G";
+      }
+      if (split.length > 2 && split.length <= 3) {
+        nextItem = split[0] + "M";
+      }
+      return nextItem;
+    } catch (error) {
+      return item;
     }
-    if (split.length > 2 && split.length <= 3) {
-      nextItem = split[0] + "M";
-    }
-    return nextItem;
   };
   const parseData = useCallback((item) => {
     const nextItem = item;
