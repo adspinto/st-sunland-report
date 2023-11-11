@@ -5,14 +5,22 @@ import Variants from "../components/Variants";
 import { useTheme } from "@mui/material/styles";
 import Container from "@mui/material/Container";
 import Filter from "../components/Filter";
-import { Box, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import {
+  Box,
+  Checkbox,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+} from "@mui/material";
 import { useContext, useEffect, useMemo, useState } from "react";
 import { Context } from "../context/AppContext";
 import useGuildV2 from "../hooks/useGuildV2";
 
 function Home() {
   const [selected, setSelected] = useState();
-  const query = useGuildV2();
+  const [checked, setChecked] = useState(false);
+  const query = useGuildV2(checked);
 
   useEffect(() => {
     if (query.data) {
@@ -106,6 +114,10 @@ function Home() {
     }, 500);
   };
 
+  const handleChange = (eve) => {
+    console.log(eve);
+    setChecked(!checked);
+  };
   return (
     <Container
       sx={{
@@ -121,7 +133,41 @@ function Home() {
     >
       {query.data && (
         <>
-          <div style={{ margin: "15px" }}>Data do relatório</div>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <div style={{ margin: "15px" }}>Data do relatório - </div>
+            <div style={{ display: "flex" }}>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                Atual/Semanal
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <FormControl sx={{ width: "95%" }}>
+                  <Checkbox
+                    checked={checked}
+                    onChange={handleChange}
+                    inputProps={{ "aria-label": "controlled" }}
+                  />
+                </FormControl>
+              </div>
+            </div>
+          </div>
           <FormControl sx={{ marginBottom: "15px", width: "95%" }}>
             <InputLabel id="demo-simple-select-label">Data</InputLabel>
             <Select

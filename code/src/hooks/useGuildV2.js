@@ -4,10 +4,11 @@ import api from "../services/api";
 import { Context } from "../context/AppContext";
 import { useSearchParams } from "react-router-dom";
 
-const useGuildV2 = () => {
+const useGuildV2 = (checked) => {
   const { user } = useContext(Context);
   const [searchParams] = useSearchParams();
   const [guild, setGuildId] = useState("");
+  const compare = checked ? "today" : "week";
 
   useEffect(() => {
     try {
@@ -94,8 +95,10 @@ const useGuildV2 = () => {
     return nextItem;
   }, []);
 
-  const getGuild = async () => {
-    const response = await api.get(`/v2/guild?guildId=${guild}`);
+  const getGuild = async (guild, compare) => {
+    const response = await api.get(
+      `/v2/guild?guildId=${guild}&compare=${compare}`
+    );
 
     return response.data;
   };
@@ -112,8 +115,8 @@ const useGuildV2 = () => {
     });
   };
   const query = useQuery({
-    queryFn: getGuild,
-    queryKey: guild,
+    queryFn: () => getGuild(guild, compare),
+    queryKey: [guild, compare],
     refetchOnWindowFocus: false,
     select: useCallback((data) => deepParse(data), []),
     enabled: !!guild,
