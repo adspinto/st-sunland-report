@@ -59,19 +59,20 @@ const useGuildV2 = (checked) => {
   }, []);
 
   const splitCurrency = (item) => {
-    try {
-      const split = item.split(",");
-      let nextItem = item;
-      if (split.length > 3) {
-        nextItem = split[0] + "G";
-      }
-      if (split.length > 2 && split.length <= 3) {
-        nextItem = split[0] + "M";
-      }
-      return nextItem;
-    } catch (error) {
-      return item;
-    }
+    return item
+    // try {
+    //   const split = item.split(",");
+    //   let nextItem = item;
+    //   if (split.length > 3) {
+    //     nextItem = split[0] + "G";
+    //   }
+    //   if (split.length > 2 && split.length <= 3) {
+    //     nextItem = split[0] + "M";
+    //   }
+    //   return nextItem;
+    // } catch (error) {
+    //   return item;
+    // }
   };
   const parseData = useCallback((item) => {
     const nextItem = item;
