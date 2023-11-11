@@ -1,5 +1,4 @@
 import "../App.css";
-import useGuild from "../hooks/useGuild";
 import MobileCard from "../components/MobileCard";
 import LinearProgress from "@mui/material/LinearProgress";
 import Variants from "../components/Variants";
@@ -14,7 +13,6 @@ import useGuildV2 from "../hooks/useGuildV2";
 function Home() {
   const [selected, setSelected] = useState();
   const query = useGuildV2();
-  console.log(query);
 
   useEffect(() => {
     if (query.data) {
@@ -54,21 +52,21 @@ function Home() {
           case "investAsc":
             return parseInt(a[findChecked.fieldValue].replaceAll(",", "")) >
               parseInt(b[findChecked.fieldValue].replaceAll(",", ""))
-              ? -1
-              : 1;
+              ? 1
+              : -1;
           case "investDesc":
             return parseInt(a[findChecked.fieldValue].replaceAll(",", "")) <
               parseInt(b[findChecked.fieldValue].replaceAll(",", ""))
-              ? -1
-              : 1;
+              ? 1
+              : -1;
           case "renomeAsc":
             return a[findChecked.fieldValue] > b[findChecked.fieldValue]
-              ? -1
-              : 1;
+              ? 1
+              : -1;
           case "renomeDesc":
             return a[findChecked.fieldValue] < b[findChecked.fieldValue]
-              ? -1
-              : 1;
+              ? 1
+              : -1;
 
           default:
             return a - b;
