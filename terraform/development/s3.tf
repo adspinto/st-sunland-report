@@ -5,14 +5,16 @@ resource "aws_s3_bucket" "history_bucket" {
     prevent_destroy = true
   }
   tags = {
-    Name        = "${var.environment}-${var.reports_bucket_tag}"
-    Environment = var.env
+    Name        = "${var.environment}-${var.bucket_name}"
+    Environment = var.environment
   }
 }
 
 resource "aws_s3_object" "directory_structure" {
+
+  for_each     = toset(var.guilds) // to set is used because regular array is not planned
   bucket       = aws_s3_bucket.history_bucket.id
-  key          = "${var.guild_id}/"
+  key          = "${each.value}/"
   content_type = "application/x-directory"
 }
 

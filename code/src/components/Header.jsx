@@ -7,12 +7,14 @@ import Button from "@mui/material/Button";
 import { useContext } from "react";
 import { ColorModeContext } from "../context/Theme";
 import { Context } from "../context/AppContext";
+import useUser from "../hooks/useUser";
 
 const Header = () => {
   const theme = useTheme();
   const colorMode = useContext(ColorModeContext);
   const { toggleDrawer } = useContext(Context);
-  const guildName =  "Relatório" //user ? user["custom:guildName"] : "";
+  const user = useUser()
+  const guildName = user ? user["custom:guildName"] : "Relatório";
   return (
     <Box
       sx={{
