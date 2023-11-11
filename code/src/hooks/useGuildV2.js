@@ -98,7 +98,7 @@ const useGuildV2 = () => {
   };
 
   const deepParse = (data) => {
-    return data.map((d_item) => {
+    return data.reverse().map((d_item) => {
       const members = d_item.members;
       const date = d_item.date;
       const parsedMembers = members.map((item) => parseData(item));
