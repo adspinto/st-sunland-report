@@ -121,7 +121,7 @@ function Home() {
     >
       {query.data && (
         <>
-          <div style={{ margin: "15px" }}>Relatório da semana</div>
+          <div style={{ margin: "15px" }}>Data do relatório</div>
           <FormControl sx={{ marginBottom: "15px", width: "95%" }}>
             <InputLabel id="demo-simple-select-label">Data</InputLabel>
             <Select
