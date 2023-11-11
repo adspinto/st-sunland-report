@@ -38,13 +38,12 @@ const deriveResponse = (current, next) => {
         state.invst_monday = find.invst;
         state.bount_week = item.bounty - find.bounty;
       }
-      if (index === 0) {
-        console.log("derive", state);
-      }
 
       return state;
     } catch (error) {
-      console.log("error", error);
+      // console.log("error", error);
+      console.log("error", currentMembers);
+      console.log("error", nextMembers);
       item.invst_monday = find.invst;
       item.bount_week = item.bounty;
       return item;
@@ -52,19 +51,69 @@ const deriveResponse = (current, next) => {
   });
 };
 
-const parseMembers = async (list = []) => {
+const cacheSmartyRes = async (obj, guildId) => {
+  var buf = Buffer.from(JSON.stringify(obj));
+  const filename = `${guildId}/cache.json`;
+  const data = {
+    Bucket: "reports-st",
+    Key: filename,
+    Body: buf,
+    ContentEncoding: "base64",
+    ContentType: "application/json",
+  };
+
+  return s3.upload(data).promise();
+};
+const handleCache = async (guildId, compare) => {
+  if (compare === "today") {
+    const date = new Date();
+    let currentCache, currentCacheDate;
+
+    try {
+      currentCache = await getObject(`${guildId}/cache.json`);
+      currentCacheDate = new Date(currentCache.LastModified);
+      console.log(
+        date.getHours(),
+        currentCacheDate?.getHours(),
+        date.getHours() - currentCacheDate?.getHours()
+      );
+    } catch (error) {
+      console.log("there is no cache");
+    }
+
+    if (!currentCache || date.getHours() - currentCacheDate?.getHours() === 1) {
+      const apiRes = await fetch(`${apiUrl}/info/city/${guildId}`);
+      const res = await apiRes.json();
+      await cacheSmartyRes(res, guildId);
+      return res;
+    } else {
+      return currentCache.Body.toString("utf-8");
+    }
+  }
+  return false;
+};
+const parseMembers = async (list = [], cache) => {
   return Promise.all(
     list.map(async (item, index) => {
       try {
-        // console.log("ittttem", item);
-        const nextIndex = index - 1;
-        console.log(index, nextIndex);
-        if (nextIndex < list.length) {
-          const next = deriveResponse(list[nextIndex].members, item.members);
+        if (cache) {
+          const parseCache = JSON.parse(cache);
+          
+          const next = deriveResponse(parseCache.data.members, item.members);
+          console.log(next);
           item.members = next;
+        } else {
+          const nextIndex = index - 1;
+          console.log(index, nextIndex);
+          if (nextIndex < list.length) {
+            const next = deriveResponse(list[nextIndex].members, item.members);
+            item.members = next;
+          }
         }
+
         return item;
       } catch (error) {
+        console.log("error", error);
         return item;
       }
     })
@@ -72,6 +121,7 @@ const parseMembers = async (list = []) => {
 };
 export const handler = async (event) => {
   const guildId = event.queryStringParameters.guildId;
+  const compare = event.queryStringParameters.compare;
   const response = {
     statusCode: 200,
     headers: {
@@ -83,6 +133,7 @@ export const handler = async (event) => {
   };
   try {
     console.log("Starting process");
+    const cache = await handleCache(guildId, compare);
     const weeklyList = await listObjects(`${guildId}/weekly`);
 
     const objects = await Promise.all(
@@ -109,7 +160,7 @@ export const handler = async (event) => {
         date: fileNameWithoutExtension,
       };
     });
-    const members = await parseMembers(parsedObjects);
+    const members = await parseMembers(parsedObjects, cache);
     response.body = JSON.stringify(members);
     return response;
   } catch (error) {
@@ -123,12 +174,13 @@ export const handler = async (event) => {
   return response;
 };
 
-// const event = {
-//   queryStringParameters: {
-//     guildId: "60d09216ce4acb13323a1109",
-//   },
-// };
-// handler(event);
+const event = {
+  queryStringParameters: {
+    guildId: "60d09216ce4acb13323a1109",
+    compare: "today",
+  },
+};
+handler(event);
 // const saveDynamo = async () => {
 //   console.log("get dyanom");
 //   const params = {
