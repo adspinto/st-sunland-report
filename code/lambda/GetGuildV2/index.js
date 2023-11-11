@@ -1,5 +1,7 @@
 import AWS from "aws-sdk";
+// import fs from "fs"
 const s3 = new AWS.S3();
+// const docClient = new AWS.DynamoDB.DocumentClient();
 
 const apiUrl = process.env.SMARTY_API_URL;
 
@@ -21,24 +23,10 @@ const listObjects = async (guildId) => {
   return s3.listObjects(data).promise();
 };
 
-const uploadCacheToS3 = async (obj, guildId) => {
-  var buf = Buffer.from(JSON.stringify(obj));
-  const filename = `${guildId}/cache.json`;
-  const data = {
-    Bucket: "reports-st",
-    Key: filename,
-    Body: buf,
-    ContentEncoding: "base64",
-    ContentType: "application/json",
-  };
-
-  return s3.upload(data).promise();
-};
-
-const deriveResponse = async (current, next) => {
+const deriveResponse = (current, next) => {
   const currentMembers = current;
   const nextMembers = next;
-  return nextMembers.map((item) => {
+  return nextMembers.map((item, index) => {
     try {
       const find = currentMembers.find((value) => value._id === item._id);
       const state = {
@@ -50,31 +38,30 @@ const deriveResponse = async (current, next) => {
         state.invst_monday = find.invst;
         state.bount_week = item.bounty - find.bounty;
       }
+      if (index === 0) {
+        console.log("derive", state);
+      }
 
       return state;
     } catch (error) {
       console.log("error", error);
+      item.invst_monday = find.invst;
+      item.bount_week = item.bounty;
       return item;
     }
   });
 };
 
-const cacheData = async (apiUrl, guildId) => {
-  const apiRes = await fetch(`${apiUrl}/info/city/${guildId}`);
-  const res = await apiRes.json();
-  await uploadCacheToS3(res, guildId);
-  return res;
-};
-
-const parseMembers = async (membersList = []) => {
+const parseMembers = async (list = []) => {
   return Promise.all(
-    membersList.map(async (item, index) => {
+    list.map(async (item, index) => {
       try {
-        console.log(item);
+        // console.log("ittttem", item);
         const nextIndex = index + 1;
-        if (nextIndex < membersList.length) {
-          const next = await deriveResponse(item, membersList[nextIndex]);
-          return next;
+        console.log(index, nextIndex);
+        if (nextIndex < list.length) {
+          const next = deriveResponse(item.members, list[nextIndex].members);
+          item.members = next;
         }
         return item;
       } catch (error) {
@@ -95,9 +82,9 @@ export const handler = async (event) => {
     body: JSON.stringify(apiUrl),
   };
   try {
-    console.log("failed here");
+    console.log("Starting process");
     const weeklyList = await listObjects(`${guildId}/weekly`);
-    console.log("or failed here", weeklyList);
+
     const objects = await Promise.all(
       weeklyList.Contents.filter((fItem) => fItem.Size).map((item) =>
         getObject(item.Key)
@@ -106,28 +93,24 @@ export const handler = async (event) => {
 
     const parsedObjects = objects.map((item, index) => {
       const itemToString = item.Body.toString("utf-8");
-      const currentWeek = weeklyList.Contents[index] ;
-      const inputString = currentWeek.Key
+      const currentWeek = weeklyList.Contents[index];
+      const inputString = currentWeek.Key;
       // Split the string by '/' to get parts of the path
-      const parts = inputString.split('/');
+      const parts = inputString.split("/");
 
       // Get the last part, which is the JSON file name
       const jsonFileName = parts[parts.length - 1];
 
       // Remove the ".json" extension
-      const fileNameWithoutExtension = jsonFileName.replace('.json', '');
+      const fileNameWithoutExtension = jsonFileName.replace(".json", "");
       const parsed = JSON.parse(itemToString);
       return {
         members: parsed.data.members,
-        date: fileNameWithoutExtension
+        date: fileNameWithoutExtension,
       };
     });
-
-    console.log("finish parsing");
-    const membersOnly = await parseMembers(parsedObjects.members);
-    parsedObjects.members = membersOnly
-    
-    response.body = JSON.stringify(parsedObjects);
+    const members = await parseMembers(parsedObjects);
+    response.body = JSON.stringify(members);
     return response;
   } catch (error) {
     console.log("error", error);
@@ -146,3 +129,22 @@ export const handler = async (event) => {
 //   },
 // };
 // handler(event);
+// const saveDynamo = async () => {
+//   console.log("get dyanom");
+//   const params = {
+//     TableName: "6282e355ddc01812f52e04f3",
+//   };
+//   const response = await docClient.scan(params).promise();
+//   console.log(response.Items);
+
+
+//   fs.writeFile("date.json", JSON.stringify(response.Items), (err) => {
+//     if (err) console.log(err);
+//     else {
+//       console.log("File written successfully\n");
+//       console.log("The written has the following contents:");
+//       // console.log(fs.readFileSync("books.txt", "utf8"));
+//     }
+//   });
+// };
+// await saveDynamo();

@@ -56,24 +56,31 @@ const useGuildV2 = () => {
       return value;
     }
   }, []);
+
+  const splitCurrency = (item) => {
+    
+    const split = item.split(",");
+    let nextItem = item;
+    if (split.length > 3) {
+      nextItem = split[0] + "G";
+    }
+    if (split.length > 2 && split.length <= 3) {
+      nextItem = split[0] + "M";
+    }
+    return nextItem;
+  };
   const parseData = useCallback((item) => {
     const nextItem = item;
 
     nextItem.invst_sofar = item.invst - item.invst_monday;
-    nextItem.invst_sofar = moneyMask(nextItem.invst_sofar);
-    nextItem.gld = moneyMask(nextItem.gld);
-    const gldSplit = nextItem.gld.split(",")
-    if(gldSplit.length > 3) {
-      nextItem.gld = gldSplit[0] + "G"
-    }
-    nextItem.invst = moneyMask(item.invst);
-    const invstSplit = nextItem.invst.split(",")
-    if(invstSplit.length > 3) {
-      nextItem.invst = invstSplit[0] + "G"
-    }
-    if(nextItem.invst_monday) {
-      nextItem.invst_monday = moneyMask(item.invst_monday);
-    }
+    nextItem.invst_sofar = splitCurrency(moneyMask(nextItem.invst_sofar));
+
+    nextItem.gld = splitCurrency(moneyMask(nextItem.gld));
+
+    nextItem.invst = splitCurrency(moneyMask(item.invst));
+
+    nextItem.invst_monday = splitCurrency(moneyMask(item.invst_monday));
+
     nextItem.joined = formatDate(nextItem.joined);
     nextItem.activity = formatDate(nextItem.activity);
     if (nextItem.percent_invested) {
@@ -91,15 +98,16 @@ const useGuildV2 = () => {
   };
 
   const deepParse = (data) => {
-   return data.map(d_item => {
-    const members = d_item.members;
-    const date = d_item.date
-    const parsedMembers =  members.map((item) => parseData(item))
-    return {
-      members: parsedMembers, date
-    }
-   })
-  }
+    return data.map((d_item) => {
+      const members = d_item.members;
+      const date = d_item.date;
+      const parsedMembers = members.map((item) => parseData(item));
+      return {
+        members: parsedMembers,
+        date,
+      };
+    });
+  };
   const query = useQuery({
     queryFn: getGuild,
     queryKey: guild,
@@ -109,7 +117,6 @@ const useGuildV2 = () => {
   });
 
   return query;
-
 };
 
 export default useGuildV2;
