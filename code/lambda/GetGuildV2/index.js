@@ -99,7 +99,7 @@ const parseMembers = async (list = [], cache) => {
         if (cache) {
           const parseCache = JSON.parse(cache);
           
-          const next = deriveResponse(parseCache.data.members, item.members);
+          const next = deriveResponse(item.members, parseCache.data.members);
           console.log(next);
           item.members = next;
         } else {
